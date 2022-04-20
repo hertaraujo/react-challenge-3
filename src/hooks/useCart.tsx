@@ -75,7 +75,7 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
   const removeProduct = (productId: number) => {
     try {
       const productIndex = cart.findIndex(p => p.id === productId);
-      if (productIndex === -1) throw new Error("Product not found");
+      if (productIndex === -1) throw new Error();
 
       setCart(cart => {
         const newCart = cart.filter(p => p.id !== productId);
@@ -92,13 +92,11 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
     amount,
   }: UpdateProductAmount) => {
     try {
-      const { data: stock } = await api.get(`stock/${productId}`);
-
       if (amount <= 0) return;
 
-      const productAmount = stock.amount;
+      const { data: stock } = await api.get(`stock/${productId}`);
 
-      if (amount > productAmount) {
+      if (amount > stock.amount) {
         toast.error("Quantidade solicitada fora de estoque");
         return;
       }
